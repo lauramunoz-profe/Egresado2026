@@ -47,7 +47,6 @@ startBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   burstParticles();
 
-  // Espera 25 segundos en silencio mientras leen y luego habilita el botón al llegar al final
   setTimeout(() => {
     canUnlockByTime = true;
     checkIfFinishedReading();
@@ -91,7 +90,7 @@ studentNameInput.addEventListener('input', (e) => {
   studentNameDisplay.textContent = value || 'Egresado/a de la Promoción 2026';
 });
 
-// Descargar diploma como imagen PNG a todo color (funciona en local y en web)
+// Descargar diploma como imagen PNG con estética Desarrollo de Sistemas
 const downloadImgBtn = document.getElementById('downloadImgBtn');
 const downloadStatus = document.getElementById('downloadStatus');
 
@@ -121,15 +120,29 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   ctx.fillText(line.trim(), x, y);
 }
 
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
 downloadImgBtn.addEventListener('click', async () => {
   const rawName = studentNameInput.value.trim();
   const studentName = rawName || 'Egresado/a de la Promoción 2026';
   const safeFileName = rawName
-    ? `Diploma_${rawName.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').replace(/\s+/g, '_')}_2026.png`
-    : 'Diploma_6to_Anio_Promocion_2026.png';
+    ? `Diploma_Sistemas_${rawName.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').replace(/\s+/g, '_')}_2026.png`
+    : 'Diploma_Desarrollo_Sistemas_2026.png';
 
   downloadImgBtn.disabled = true;
-  downloadImgBtn.textContent = 'GENERANDO IMAGEN...';
+  downloadImgBtn.textContent = 'COMPILANDO IMAGEN...';
 
   try {
     await document.fonts.ready;
@@ -141,23 +154,22 @@ downloadImgBtn.addEventListener('click', async () => {
     c.height = H;
     const ctx = c.getContext('2d');
 
-    // Marco exterior dorado
-    const goldGrad = ctx.createLinearGradient(0, 0, W, H);
-    goldGrad.addColorStop(0, '#9c7029');
-    goldGrad.addColorStop(0.35, '#f5df9e');
-    goldGrad.addColorStop(0.7, '#8c6222');
-    goldGrad.addColorStop(1, '#edd082');
-    ctx.fillStyle = goldGrad;
+    // Fondo oscuro tecnológico
+    const bgGrad = ctx.createRadialGradient(W / 2, H * 0.3, 100, W / 2, H / 2, W * 0.7);
+    bgGrad.addColorStop(0, '#0d233f');
+    bgGrad.addColorStop(1, '#050f1d');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, W, H);
 
-    // Fondo crema interior
-    const pad = 28;
-    const bgGrad = ctx.createRadialGradient(W / 2, H * 0.35, 80, W / 2, H / 2, W * 0.65);
-    bgGrad.addColorStop(0, '#fffdf7');
-    bgGrad.addColorStop(0.65, '#f6edd6');
-    bgGrad.addColorStop(1, '#ebdec0');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(pad, pad, W - pad * 2, H - pad * 2);
+    // Cuadrícula sutil de fondo
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
 
     // Carga segura de imágenes
     const [logoImg, gradImg] = await Promise.all([
@@ -167,202 +179,223 @@ downloadImgBtn.addEventListener('click', async () => {
 
     if (gradImg) {
       ctx.save();
-      ctx.globalAlpha = 0.07;
-      ctx.drawImage(gradImg, pad, pad, W - pad * 2, H - pad * 2);
+      ctx.globalAlpha = 0.06;
+      ctx.drawImage(gradImg, 0, 72, W, H - 72);
       ctx.restore();
     }
 
-    // Doble borde y esquinas ornamentales
-    ctx.strokeStyle = '#8f6b32';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(pad, pad, W - pad * 2, H - pad * 2);
+    // Barra superior estilo IDE / Terminal
+    ctx.fillStyle = '#0d213b';
+    ctx.fillRect(0, 0, W, 72);
 
-    ctx.strokeStyle = '#c2a25e';
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
     ctx.lineWidth = 2;
-    ctx.strokeRect(pad + 18, pad + 18, W - (pad + 18) * 2, H - (pad + 18) * 2);
+    ctx.beginPath();
+    ctx.moveTo(0, 72);
+    ctx.lineTo(W, 72);
+    ctx.stroke();
 
-    const cOff = pad + 32;
-    const cLen = 40;
-    ctx.strokeStyle = '#8f6b32';
-    ctx.lineWidth = 4;
-    [[cOff, cOff, 1, 1], [W - cOff, cOff, -1, 1], [cOff, H - cOff, 1, -1], [W - cOff, H - cOff, -1, -1]].forEach(([x, y, dx, dy]) => {
+    // Botones de ventana (rojo, amarillo, verde)
+    const dotColors = ['#ff5f56', '#ffbd2e', '#27c93f'];
+    dotColors.forEach((col, i) => {
+      ctx.fillStyle = col;
       ctx.beginPath();
-      ctx.moveTo(x, y + dy * cLen);
-      ctx.lineTo(x, y);
-      ctx.lineTo(x + dx * cLen, y);
-      ctx.stroke();
+      ctx.arc(46 + i * 32, 36, 10, 0, Math.PI * 2);
+      ctx.fill();
     });
 
-    // Encabezado institucional
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '500 20px "DM Mono", monospace';
+    ctx.fillText('~/desarrollo-de-sistemas/egresado_2026.exe', W / 2, 43);
+
+    // Badge versión derecha
+    drawRoundedRect(ctx, W - 260, 18, 220, 36, 18);
+    ctx.fillStyle = 'rgba(0, 255, 136, 0.14)';
+    ctx.fill();
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#00ff88';
+    ctx.font = '700 17px "DM Mono", monospace';
+    ctx.fillText('v2026.11 STABLE', W - 150, 42);
+
+    // Borde exterior cian neón
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(3, 3, W - 6, H - 6);
+
+    // Encabezado institucional + logos
     if (logoImg) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.drawImage(logoImg, 110, 78, 130, 130);
-      ctx.restore();
+      drawRoundedRect(ctx, 90, 105, 124, 124, 18);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.drawImage(logoImg, 100, 115, 104, 104);
     }
 
     if (gradImg) {
       ctx.save();
       ctx.beginPath();
-      ctx.arc(W - 175, 143, 62, 0, Math.PI * 2);
+      ctx.arc(W - 152, 167, 60, 0, Math.PI * 2);
       ctx.clip();
-      ctx.drawImage(gradImg, W - 237, 81, 124, 124);
+      ctx.drawImage(gradImg, W - 212, 107, 120, 120);
       ctx.restore();
-      ctx.strokeStyle = '#9c793e';
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.arc(W - 175, 143, 62, 0, Math.PI * 2);
+      ctx.arc(W - 152, 167, 60, 0, Math.PI * 2);
       ctx.stroke();
     }
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#1f2d42';
-    ctx.font = '700 34px "Playfair Display", Georgia, serif';
-    ctx.fillText('INSTITUTO NUESTRA SEÑORA DE FÁTIMA', W / 2, 136);
+    ctx.fillStyle = '#00ff88';
+    ctx.font = '700 19px "DM Mono", monospace';
+    ctx.fillText('// ESPACIO CURRICULAR: DESARROLLO DE SISTEMAS', W / 2, 135);
 
-    ctx.fillStyle = '#7c6438';
-    ctx.font = '500 18px "DM Mono", monospace';
-    ctx.fillText('VILLA SOLDATI · BUENOS AIRES · ARGENTINA', W / 2, 172);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 34px "Space Grotesk", sans-serif';
+    ctx.fillText('INSTITUTO NUESTRA SEÑORA DE FÁTIMA', W / 2, 178);
 
-    ctx.strokeStyle = '#cbb686';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(110, 228);
-    ctx.lineTo(W - 110, 228);
-    ctx.stroke();
+    ctx.fillStyle = '#67e8f9';
+    ctx.font = '500 19px "DM Mono", monospace';
+    ctx.fillText('6.º AÑO · TÉCNICO EN COMPUTACIÓN · BUENOS AIRES', W / 2, 214);
 
-    // Títulos
-    ctx.fillStyle = '#826736';
-    ctx.font = '500 18px "DM Mono", monospace';
-    ctx.fillText('ESPACIO CURRICULAR: DESARROLLO DE SISTEMAS · CICLO LECTIVO 2026', W / 2, 275);
-
-    ctx.fillStyle = '#1f2d42';
-    ctx.font = '700 62px "Playfair Display", Georgia, serif';
-    ctx.fillText('DIPLOMA DE FINALIZACIÓN', W / 2, 350);
-
-    // Ornamento central
-    ctx.strokeStyle = '#b08a48';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(W / 2 - 190, 385);
-    ctx.lineTo(W / 2 - 30, 385);
-    ctx.moveTo(W / 2 + 30, 385);
-    ctx.lineTo(W / 2 + 190, 385);
-    ctx.stroke();
-    ctx.fillStyle = '#a67f3c';
-    ctx.font = '24px serif';
-    ctx.fillText('✧', W / 2, 393);
-
-    // Nombre del estudiante
-    ctx.fillStyle = '#4b586b';
-    ctx.font = 'italic 26px "Playfair Display", Georgia, serif';
-    ctx.fillText('Se otorga el presente reconocimiento a', W / 2, 450);
-
-    ctx.fillStyle = '#7c5821';
-    ctx.font = '400 78px "Great Vibes", cursive';
-    ctx.fillText(studentName, W / 2, 535);
-
-    const nameW = Math.max(520, ctx.measureText(studentName).width + 80);
+    // Línea punteada separadora
     ctx.save();
-    ctx.setLineDash([8, 6]);
-    ctx.strokeStyle = '#bfa56a';
+    ctx.setLineDash([10, 8]);
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(W / 2 - nameW / 2, 552);
-    ctx.lineTo(W / 2 + nameW / 2, 552);
+    ctx.moveTo(90, 255);
+    ctx.lineTo(W - 90, 255);
     ctx.stroke();
     ctx.restore();
 
-    ctx.fillStyle = '#24364f';
-    ctx.font = '700 28px "DM Mono", monospace';
-    ctx.fillText('6.º AÑO · TÉCNICO EN COMPUTACIÓN', W / 2, 608);
+    // Badge BUILD SUCCESSFUL
+    drawRoundedRect(ctx, W / 2 - 240, 285, 480, 38, 8);
+    ctx.fillStyle = 'rgba(0, 240, 255, 0.12)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#00f0ff';
+    ctx.font = '700 18px "DM Mono", monospace';
+    ctx.fillText('✔ BUILD SUCCESSFUL · CICLO LECTIVO 2026', W / 2, 310);
 
-    ctx.fillStyle = '#3f4d61';
-    ctx.font = '400 25px "Playfair Display", Georgia, serif';
+    // Título principal
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 54px "Space Grotesk", sans-serif';
+    ctx.fillText('CERTIFICADO DE COMPILACIÓN FINAL', W / 2, 382);
+
+    // Caja terminal del alumno
+    const boxW = 1140;
+    const boxH = 145;
+    const boxX = (W - boxW) / 2;
+    const boxY = 415;
+
+    drawRoundedRect(ctx, boxX, boxY, boxW, boxH, 14);
+    ctx.fillStyle = 'rgba(13, 33, 59, 0.92)';
+    ctx.fill();
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Borde izquierdo grueso verde neón
+    ctx.fillStyle = '#00ff88';
+    ctx.fillRect(boxX, boxY + 8, 10, boxH - 16);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '500 19px "DM Mono", monospace';
+    ctx.fillText('> developer --certified-name:', W / 2, boxY + 42);
+
+    ctx.fillStyle = '#00ff88';
+    ctx.font = '700 56px "Space Grotesk", sans-serif';
+    ctx.fillText(studentName, W / 2, boxY + 110);
+
+    // Texto descriptivo
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '400 23px "DM Mono", monospace';
     wrapText(
       ctx,
-      'Por haber completado con dedicación, esfuerzo y creatividad esta etapa formativa, demostrando que cada desafío técnico y personal es el punto de partida hacia una nueva versión.',
+      'Por haber planificado, codificado, depurado y superado con éxito cada desafío técnico de Desarrollo de Sistemas, demostrando que cada error resuelto es la base para desplegar su mejor versión en producción.',
       W / 2,
-      662,
-      1080,
+      615,
+      1180,
       36
     );
 
-    // Barra de estado
-    ctx.strokeStyle = '#cbb686';
+    // Panel de métricas (Estado / Stack / Commit)
+    const statY = 755;
+    const statH = 95;
+    drawRoundedRect(ctx, 160, statY, W - 320, statH, 12);
+    ctx.fillStyle = 'rgba(6, 18, 34, 0.95)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
     ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(220, 765);
-    ctx.lineTo(W - 220, 765);
-    ctx.moveTo(220, 845);
-    ctx.lineTo(W - 220, 845);
     ctx.stroke();
 
-    ctx.fillStyle = '#7e6b46';
-    ctx.font = '500 16px "DM Mono", monospace';
-    ctx.fillText('ESTADO DEL SISTEMA', W / 2 - 230, 795);
-    ctx.fillText('PRÓXIMO COMPILADO', W / 2 + 230, 795);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '500 15px "DM Mono", monospace';
+    ctx.fillText('ESTADO DEL SISTEMA', 380, statY + 34);
+    ctx.fillText('STACK ADQUIRIDO', W / 2, statY + 34);
+    ctx.fillText('PRÓXIMO COMMIT', W - 380, statY + 34);
 
-    ctx.fillStyle = '#26364d';
+    ctx.fillStyle = '#67e8f9';
     ctx.font = '700 20px "DM Mono", monospace';
-    ctx.fillText('ETAPA COMPLETADA (100%)', W / 2 - 230, 825);
-    ctx.fillText('UN NUEVO COMIENZO', W / 2 + 230, 825);
+    ctx.fillText('DEPLOYED (100%)', 380, statY + 68);
+    ctx.fillText('LÓGICA · CÓDIGO · CRITERIO', W / 2, statY + 68);
+    ctx.fillText('UN NUEVO COMIENZO', W - 380, statY + 68);
 
-    ctx.fillStyle = '#a67f3c';
-    ctx.font = '26px serif';
-    ctx.fillText('✦', W / 2, 815);
-
-    // Sello dorado central inferior
-    const sealY = 965;
-    const sealGrad = ctx.createRadialGradient(W / 2, sealY, 10, W / 2, sealY, 72);
-    sealGrad.addColorStop(0, '#f9e8b2');
-    sealGrad.addColorStop(1, '#dfc074');
-    ctx.fillStyle = sealGrad;
+    // Sello central tipo badge tech
+    const sealY = 975;
+    ctx.fillStyle = '#0d213b';
     ctx.beginPath();
-    ctx.arc(W / 2, sealY, 72, 0, Math.PI * 2);
+    ctx.arc(W / 2, sealY, 74, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = '#9c722c';
-    ctx.lineWidth = 4;
+    ctx.save();
+    ctx.setLineDash([8, 6]);
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.arc(W / 2, sealY, 72, 0, Math.PI * 2);
+    ctx.arc(W / 2, sealY, 74, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(W / 2, sealY, 64, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.restore();
 
-    ctx.fillStyle = '#4f3710';
-    ctx.font = '700 13px "DM Mono", monospace';
-    ctx.fillText('PROMOCIÓN', W / 2, sealY - 22);
-    ctx.font = '700 32px "Playfair Display", Georgia, serif';
-    ctx.fillText('2026', W / 2, sealY + 11);
-    ctx.font = '700 13px "DM Mono", monospace';
-    ctx.fillText('6.º TÉCNICA', W / 2, sealY + 33);
+    ctx.fillStyle = '#00ff88';
+    ctx.font = '700 14px "DM Mono", monospace';
+    ctx.fillText('PROMOCIÓN', W / 2, sealY - 24);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 34px "Space Grotesk", sans-serif';
+    ctx.fillText('2026', W / 2, sealY + 12);
+    ctx.fillStyle = '#00ff88';
+    ctx.font = '700 14px "DM Mono", monospace';
+    ctx.fillText('6.º TÉCNICA', W / 2, sealY + 36);
 
     // Firmas izquierda y derecha
-    ctx.strokeStyle = '#8f6b32';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 26px "Space Grotesk", sans-serif';
+    ctx.fillText('Prof. Muñoz Laura', 360, 955);
+    ctx.fillText('18 de noviembre de 2026', W - 360, 955);
+
+    ctx.strokeStyle = '#00f0ff';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(160, 965);
-    ctx.lineTo(560, 965);
-    ctx.moveTo(W - 560, 965);
-    ctx.lineTo(W - 160, 965);
+    ctx.moveTo(160, 972);
+    ctx.lineTo(560, 972);
+    ctx.moveTo(W - 560, 972);
+    ctx.lineTo(W - 160, 972);
     ctx.stroke();
 
-    ctx.fillStyle = '#223147';
-    ctx.font = '700 22px "Playfair Display", Georgia, serif';
-    ctx.fillText('Prof. Muñoz Laura', 360, 998);
-    ctx.fillText('Cierre de Ciclo Lectivo', W - 360, 998);
+    ctx.fillStyle = '#00f0ff';
+    ctx.font = '700 18px "DM Mono", monospace';
+    ctx.fillText('Docente / Tech Lead', 360, 1002);
+    ctx.fillText('Fecha de Release', W - 360, 1002);
 
-    ctx.fillStyle = '#6e5d3e';
+    ctx.fillStyle = '#94a3b8';
     ctx.font = '500 16px "DM Mono", monospace';
-    ctx.fillText('Desarrollo de Sistemas · Técnico en Computación', 360, 1025);
-    ctx.fillText('Buenos Aires, Argentina', W - 360, 1025);
-
-    ctx.fillStyle = '#3a485c';
-    ctx.font = 'italic 22px "Playfair Display", Georgia, serif';
-    ctx.fillText('18 de noviembre de 2026', W - 360, 948);
+    ctx.fillText('Desarrollo de Sistemas', 360, 1028);
+    ctx.fillText('Villa Soldati, Buenos Aires', W - 360, 1028);
 
     // Descarga directa
     const link = document.createElement('a');
@@ -370,7 +403,7 @@ downloadImgBtn.addEventListener('click', async () => {
     link.href = c.toDataURL('image/png');
     link.click();
 
-    downloadStatus.textContent = '¡Diploma descargado en tu dispositivo!';
+    downloadStatus.textContent = '¡Diploma compilado y descargado!';
   } catch (err) {
     console.error(err);
     downloadStatus.textContent = 'Hubo un problema al generar la imagen. Intentá nuevamente.';
@@ -406,7 +439,7 @@ function draw() {
     if (p.y < -5) { p.y = innerHeight + 5; p.x = Math.random() * innerWidth; }
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(220,195,132,${p.a})`;
+    ctx.fillStyle = `rgba(0, 240, 255, ${p.a})`;
     ctx.fill();
   }
   requestAnimationFrame(draw);
