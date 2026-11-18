@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071426">
+  <meta name="description" content="Un mensaje especial para la promoción de 6.º año de Técnico en Computación - Instituto Nuestra Señora de Fátima.">
+  <title>Promoción 6.º Año | Desarrollo de Sistemas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <main>
+    <section class="intro screen active" id="intro">
+      <div class="terminal">
+        <div class="terminal-top"><span></span><span></span><span></span><small>DESARROLLO_DE_SISTEMAS.exe</small></div>
+        <p class="muted">C:\PROMOCION_6TO&gt; iniciar_despedida</p>
+        <h1 class="boot-title">INICIANDO SISTEMA<span class="cursor">_</span></h1>
+        <div class="progress"><span id="progressBar"></span></div>
+        <p id="bootStatus" class="boot-status">Cargando recuerdos...</p>
+        <button id="startBtn" class="button primary" disabled>INGRESAR AL SISTEMA <span>→</span></button>
+      </div>
+      <p class="intro-foot">INSTITUTO NUESTRA SEÑORA DE FÁTIMA · TÉCNICO EN COMPUTACIÓN</p>
+    </section>
+
+    <section class="screen content-screen" id="mainContent" aria-hidden="true">
+      <header class="topline">
+        <span>INSTITUTO NUESTRA SEÑORA DE FÁTIMA // 6.º AÑO</span>
+        <span class="online"><i></i> PROMOCIÓN 2026</span>
+      </header>
+
+      <div class="letter-layout" id="letterLayout">
+        <section class="letter panel" id="letterPanel">
+          <div class="panel-heading"><span class="tiny-icon">✦</span> MENSAJE DE SU PROFESORA <span class="line"></span></div>
+          <h2>Queridos estudiantes de 6.º año:</h2>
+          <div id="letterText" class="letter-text">
+            <p>Hoy no estamos cerrando solamente una materia, ni terminando un ciclo escolar. Hoy estamos cerrando una etapa muy importante de sus vidas.</p>
+            <p>Durante este recorrido, en Desarrollo de Sistemas aprendimos que todo proyecto comienza con una idea, que necesita planificación, esfuerzo, pruebas, correcciones y, muchas veces, volver a empezar.</p>
+            <p>Y creo que eso también representa la vida.</p>
+            <p>No todo va a salir como lo planificaron. Habrá errores, dificultades y momentos en los que sentirán que algo no funciona. Pero recuerden algo: un error no significa que todo esté perdido; muchas veces es la oportunidad de aprender, mejorar y encontrar una solución diferente.</p>
+            <p>Hoy ustedes dejan de ser solamente estudiantes de una escuela técnica. Se llevan conocimientos, experiencias, amistades y herramientas que podrán utilizar en muchos caminos.</p>
+            <p>No dejen de aprender, de preguntar, de crear y de animarse a desarrollar sus propias ideas.</p>
+            <p>Les deseo que puedan construir un futuro del que se sientan orgullosos. Y recuerden que el proyecto más importante que tienen por delante es su propia vida.</p>
+            <p class="closing-line">¡Felicitaciones, promoción de 6.º año! Que esta nueva versión de ustedes sea la mejor hasta ahora.</p>
+            <p class="signature" id="letterEnd">Con mucho cariño,<br><strong>Prof. Muñoz Laura</strong><br><span>Desarrollo de Sistemas</span></p>
+          </div>
+        </section>
+
+        <aside class="side-action" id="sideAction" hidden>
+          <div class="side-card unlocked-card" id="diplomaTriggerBox">
+            <span class="badge-ready">● RECUERDO DESBLOQUEADO</span>
+            <h3>Tu Diploma de 6.º Año</h3>
+            <p>Personalizalo con tu nombre y descargalo en imagen a todo color.</p>
+            <button class="button primary full-btn" id="openModalBtn">VER DIPLOMA <span>✦</span></button>
+          </div>
+        </aside>
+      </div>
+
+      <footer>DESARROLLO DE SISTEMAS <span>•</span> INSTITUTO NUESTRA SEÑORA DE FÁTIMA <span>•</span> PROMOCIÓN 2026</footer>
+    </section>
+  </main>
+
+  <!-- MODAL DEL DIPLOMA -->
+  <div class="modal-overlay" id="diplomaModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <button class="modal-close" id="closeModalBtn" aria-label="Cerrar diploma">✕</button>
+
+      <div class="student-input-box">
+        <label for="studentNameInput">Escribí tu nombre y apellido para el diploma:</label>
+        <input type="text" id="studentNameInput" placeholder="Ej: Juan Pérez" maxlength="45" autocomplete="off">
+      </div>
+
+      <div class="diploma-scroll-wrapper">
+        <article class="diploma" id="diploma">
+          <div class="diploma-inner">
+            <img src="graduacion.jpg" alt="" class="diploma-watermark" aria-hidden="true">
+
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner bl"></div>
+            <div class="corner br"></div>
+
+            <header class="diploma-header">
+              <img src="logo.png" alt="Escudo Instituto Nuestra Señora de Fátima" class="school-logo">
+              <div class="school-info">
+                <span class="school-name">INSTITUTO NUESTRA SEÑORA DE FÁTIMA</span>
+                <span class="school-sub">VILLA SOLDATI · BUENOS AIRES · ARGENTINA</span>
+              </div>
+              <div class="tech-badge">
+                <img src="graduacion.jpg" alt="Graduación Técnico en Computación">
+              </div>
+            </header>
+
+            <div class="diploma-kicker">ESPACIO CURRICULAR: DESARROLLO DE SISTEMAS · CICLO LECTIVO 2026</div>
+            <h2>DIPLOMA DE FINALIZACIÓN</h2>
+            <div class="ornament"><span></span> ✧ <span></span></div>
+
+            <p class="diploma-label">Se otorga el presente reconocimiento a</p>
+            <div class="student-name-display" id="studentNameDisplay">Egresado/a de la Promoción 2026</div>
+
+            <h3>6.º AÑO · TÉCNICO EN COMPUTACIÓN</h3>
+            <p class="diploma-copy">Por haber completado con dedicación, esfuerzo y creatividad esta etapa formativa, demostrando que cada desafío técnico y personal es el punto de partida hacia una nueva versión.</p>
+
+            <div class="diploma-status">
+              <div><small>ESTADO DEL SISTEMA</small><strong>ETAPA COMPLETADA (100%)</strong></div>
+              <div class="arrow">✦</div>
+              <div><small>PRÓXIMO COMPILADO</small><strong>UN NUEVO COMIENZO</strong></div>
+            </div>
+
+            <div class="diploma-signatures">
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <strong>Prof. Muñoz Laura</strong>
+                <span>Desarrollo de Sistemas · Técnico en Computación</span>
+              </div>
+
+              <div class="official-seal">
+                <span>PROMOCIÓN</span>
+                <strong>2026</strong>
+                <span>6.º TÉCNICA</span>
+              </div>
+
+              <div class="sig-block">
+                <div class="sig-date">18 de noviembre de 2026</div>
+                <div class="sig-line"></div>
+                <strong>Cierre de Ciclo Lectivo</strong>
+                <span>Buenos Aires, Argentina</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="modal-actions">
+        <button class="button primary" id="downloadImgBtn">⤓ DESCARGAR DIPLOMA (IMAGEN PNG)</button>
+        <p class="print-note" id="downloadStatus">Se descargará a todo color lista para guardar o compartir.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
